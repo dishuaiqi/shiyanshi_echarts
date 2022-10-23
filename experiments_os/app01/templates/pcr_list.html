@@ -1,0 +1,146 @@
+{% extends 'layout.html'  %}
+
+{% block content %}
+     <div>
+         <div class="container">
+             <div style="margin-bottom: 10px">
+                 <div class="btn btn-primary" id="btnAdd">添加</div>
+             </div>
+
+              <div class="panel panel-default">
+              <!-- Default panel contents -->
+                  <div class="panel-heading">
+                     <span class="glyphicon glyphicon-th-list" aria-hidden="true"></span>
+                     病原列表
+                  </div>
+                  <div class="panel-body">
+                <table class="table table-bordered">
+                    <thead>
+                      <tr>
+                        <th>ID</th>
+                        <th>日期</th>
+                        <th>公司</th>
+                        <th>部门</th>
+                        <th>样本类型</th>
+                        <th>检测类型</th>
+                        <th>试剂盒</th>
+                        <th>样本信息</th>
+                        <th>检测结果</th>
+                        <th>FAM</th>
+{#                        <th>单价</th>#}
+
+                      </tr>
+                    </thead>
+                    <tbody>
+                    {% for obj in querryset %}
+                      <tr>
+                        <th>{{ obj.id }}</th>
+                        <td>{{ obj.日期 }}</td>
+                        <td>{{ obj.公司}}</td>
+                        <td>{{ obj.部门 }}</td>
+                        <td>{{ obj.样本类型 }}</td>
+                        <td>{{ obj.检测类型 }}</td>
+                        <td>{{ obj.试剂盒 }}</td>
+                        <td>{{ obj.检测样本信息}}</td>
+                        <td>{{ obj.结果 }}</td>
+                        <td>{{ obj.fam值 }}</td>
+{#                        <td>{{ obj.price }}</td>#}
+{#                        <td>#}
+{#                            <a class="btn-primary btn-xs" href="/edit/depart/?nid={{ obj.id }}">编辑</a>#}
+{#                            <a class="btn-danger btn-xs" href="/del/depart/?nid={{ obj.id }}">删除</a>#}
+{#                        </td>#}
+
+                      </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                  </div>
+
+         </div>
+        </div>
+     </div>
+
+
+<!-- 模态弹出框 可以用bootstrap中设计好的弹出，也可以自己写js进行事件绑定弹出-->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">添 加</h4>
+      </div>
+      <div class="modal-body">
+        <div class="panel panel-default">
+
+          <div class="panel-body">
+             <form id="addform">
+                    <div class="clearfix">
+                     {% for field in form %}
+                        <div class="col-xs-6">
+                            <div class="form-group" style="position: relative;margin-bottom: 20px">
+                                 <label class="">{{ field.label }}</label>
+                                 {{ field }}
+                                <span class="error_msg" style="color: red;position: absolute;"></span>
+                            </div>
+                         </div>
+                     {% endfor %}
+                    </div>
+                 </form>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">取 消</button>
+        <button id='btnSave' type="button" class="btn btn-primary">保 存</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+{% endblock %}
+
+{% block js %}
+    <script type="text/javascript">
+        $(function () {
+            bindBtnAddEvent();
+            bindBtnSaveEvent();
+
+        });
+        function bindBtnAddEvent() {
+            $('#btnAdd').click(function () {
+                $('#myModal').modal('show');
+            })
+
+        }
+        function bindBtnSaveEvent() {
+            $('#btnSave').click(function () {
+                $.ajax({
+                    url:'/pcr/add/',
+                    type:'post',
+                    data:$('#addform').serialize(),
+                    dataType:'JSON',
+                    success:function (res) {
+                        location.reload();
+
+                    }
+                })
+
+            })
+        }
+
+
+    </script>
+
+
+
+{% endblock %}

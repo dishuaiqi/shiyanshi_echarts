@@ -1,0 +1,587 @@
+﻿{% extends 'layout.html' %}
+{% load static %}
+
+
+{% block css %}
+    <link rel="stylesheet" href={% static "css/common.css" %}>
+    <link rel="stylesheet" href={% static "css/map.css" %}>
+{% endblock %}
+
+{% block content %}
+	<div class="loading">
+      <div class="loadbox"> <img src={% static "picture/loading.gif"%}> 页面加载中... </div>
+    </div>
+<div class="data">
+    <div class="data-title">
+        <div class="title-center ">安徽禾丰检测中心数据展示</div>
+    </div>
+    <div class="data-content">
+        <div class="con-left fl">
+            <div class="left-top">
+                <div class="info boxstyle">
+                    <div class="title">实时统计</div>
+                    <div class="info-main">
+						<ul>
+							<li><img style="height:48px;width: 48px" src={% static "picture/dna.png"%} ><span>病原检测总数(个)</span><p>{{ pcrcount }}</p></li>
+							<li><img style="height:48px;width: 48px" src={% static "picture/测序仪 pacbio .png"%} ><span>抗体检测总数(个)</span><p>{{ kangti_count }}</p></li>
+							<li><img src={% static "picture/info-img-3.png"%}><span>上月检测数(个)</span><p>{{ last_month_pcrcount }}</p></li>
+							<li><img style="height:48px;width: 48px" src={% static "picture/阳性.png"%}><span>上月阳性数(个)</span><p>{{ last_month_positive_count }}</p></li>
+						</ul>
+                    </div>
+                </div>
+                <div class="top-bottom boxstyle">
+                    <div class="title">样品类型</div>
+                    <div id="echarts_1" class="charts"></div>
+                     <div id="main" style="width: 300px;height:200px;"></div>
+                </div>
+            </div>
+            <div class="left-bottom boxstyle">
+                <div class="title">检测类型</div>
+                <div id="echarts_2" class="charts" style="width: 300px;height:200px;"></div>
+
+            </div>
+        </div>
+        <div class="con-center fl">
+            <div class="map-num">
+                <p>总检测数量</p>
+                <div class="num">
+                    <span>{{ all_count.0 }}</span>
+                    <span>{{ all_count.1 }}</span>
+                    <span>{{ all_count.2 }}</span>
+                    <span>{{ all_count.3 }}</span>
+                    <span>{{ all_count.4 }}</span>
+                    <span>{{ all_count.5 }}</span>
+                    <span>{{ all_count.6 }}</span>
+                </div>
+            </div>
+            <div class="cen-top map" id="map" style="height: 90px"></div>
+            <div class="cen-bottom boxstyle">
+                <div class="title">检测数量</div>
+                <div id="echarts_3" class="charts" style="width: 600px;height:700px;"></div>
+            </div>
+        </div>
+        <div class="con-right fr">
+            <div class="right-top boxstyle">
+                <div class="title">上月不同类型阳性数量</div>
+                <div id="echarts_4" class="charts" style="height: 270px"></div>
+            </div>
+            <div class="right-center boxstyle">
+                <div class="title">本月阳性场区</div>
+                <div id="echarts_5" class="charts"  style="height: 200px"></div>
+            </div>
+            <div class="right-bottom boxstyle">
+                <div class="title">不同场区检测数量TOP10 </div>
+                <div id="echarts_6" class="charts" style="height: 200px"></div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block js %}
+    <script src={% static "js/jquery-2.1.1.min.js" %}></script>
+    <script>
+	 $(window).load(function(){
+             $(".loading").fadeOut()
+            })
+	</script>
+    <script src={% static "js/echarts.min.js" %}></script>
+    <script src={% static "js/china.js"%}></script>
+    <script src={% static "js/echarts.js"%}></script>
+        <script src="{% static '/js/echarts.js' %}"></script>
+
+  <script type="text/javascript">
+      // 基于准备好的dom，初始化echarts实例
+       $(function () {
+            //初始化柱状图
+            yangpinType();
+            gongsiType();
+            jianceType();
+            positiveType();
+            positiveChangqu();
+            changquTop();
+
+        });
+         function yangpinType() {
+        var chartDom = document.getElementById('main');
+            var myChart = echarts.init(chartDom);
+            var option;
+
+            option = {
+                  tooltip: {
+                    trigger: 'item'
+                  },
+                  color: [ '#20b9cf', '#2089cf', '#205bcf'],
+                  legend: {
+
+                    left:'',
+                    bottom:'1%',
+                     textStyle: {
+                        color:'#FFFFFF'
+                     }
+
+                  },
+
+
+                  series: [
+                    {
+                      name: 'Access From',
+                      type: 'pie',
+                      radius: ['40%', '70%'],
+                      center:['30%','50%'],
+                      avoidLabelOverlap: false,
+                      label: {
+                        show: false,
+                        position: 'center',
+
+                      },
+                      emphasis: {
+                        label: {
+                          show: true,
+                          fontSize: '40',
+                          fontWeight: 'bold',
+                          textStyle:{color:'#FFFFFF'}
+                        }
+                      },
+                      labelLine: {
+                        show: false
+                      },
+                      data: [
+                        { value: 1048, name: 'Search Engine' },
+                        { value: 735, name: 'Direct' },
+                        { value: 580, name: 'Email' },
+                        { value: 484, name: 'Union Ads' },
+                        { value: 300, name: 'Video Ads' }
+                      ]
+                    }
+                  ]
+                };
+                $.ajax({
+                    url:'/echart/bar/',
+                    type:'get',
+                    dataType:'JSON',
+                    success:function (res) {
+                        console.log(res.series);
+
+
+                        option.series=res.series_yangpinType;
+                        console.log(option.series);
+
+
+                        option && myChart.setOption(option);
+                    }
+                });
+             {#option && myChart.setOption(option);#}
+
+         }
+         function gongsiType() {
+             var chartDom = document.getElementById('echarts_3');
+             var myChart = echarts.init(chartDom);
+             var option;
+             setTimeout(function () {
+                 option = {
+                     legend: {
+                         textStyle:{
+                                 color:'#fff'
+                            },
+                     },
+                     tooltip: {
+                         trigger: 'axis',
+                         showContent: false
+                     },
+                     dataset: {
+                         source: [
+                             ['product', '2012', '2013', '2014', '2015', '2016', '2017'],
+                             ['Milk Tea', 56.5, 82.1, 88.7, 70.1, 53.4, 85.1],
+                             ['Matcha Latte', 51.1, 51.4, 55.1, 53.3, 73.8, 68.7],
+                             ['Cheese Cocoa', 40.1, 62.2, 69.5, 36.4, 45.2, 32.5],
+                             ['Walnut Brownie', 25.2, 37.1, 41.2, 18, 33.9, 49.1]
+                         ]
+                     },
+                     xAxis: {type: 'category'},
+                     yAxis: {gridIndex: 0},
+                     grid: {top: '50%',
+                            left:'10%'
+                     },
+                     series: [
+                         {
+                             type: 'line',
+                             smooth: true,
+                             seriesLayoutBy: 'row',
+                             emphasis: {focus: 'series'}
+                         },
+                         {
+                             type: 'line',
+                             smooth: true,
+                             seriesLayoutBy: 'row',
+                             emphasis: {focus: 'series'}
+                         },
+                          {
+                             type: 'line',
+                             smooth: true,
+                             seriesLayoutBy: 'row',
+                             emphasis: {focus: 'series'}
+                         },
+                          {
+                             type: 'line',
+                             smooth: true,
+                             seriesLayoutBy: 'row',
+                             emphasis: {focus: 'series'}
+                         },
+                          {
+                             type: 'line',
+                             smooth: true,
+                             seriesLayoutBy: 'row',
+                             emphasis: {focus: 'series'}
+                         },
+                          {
+                             type: 'line',
+                             smooth: true,
+                             seriesLayoutBy: 'row',
+                             emphasis: {focus: 'series'}
+                         },
+                         {
+                             type: 'line',
+                             smooth: true,
+                             seriesLayoutBy: 'row',
+                             emphasis: {focus: 'series'}
+                         },
+                         {
+                             type: 'line',
+                             smooth: true,
+                             seriesLayoutBy: 'row',
+                             emphasis: {focus: 'series'}
+                         },
+                         {
+                             type: 'line',
+                             smooth: true,
+                             seriesLayoutBy: 'row',
+                             emphasis: {focus: 'series'}
+                         },
+                         {
+                             type: 'pie',
+                             id: 'pie',
+                             radius: '30%',
+                             center: ['50%', '25%'],
+                             emphasis: {
+                                 focus: 'self'
+                             },
+                             label: {
+                                 formatter: '{d}%',
+                                 textStyle:{
+                                 color:'#fff'
+                                 },
+                             },
+                             encode: {
+                                 itemName: '月份',
+                                 value: '1月',
+                                 tooltip: '1月'
+                             }
+                         }
+                     ]
+                 };
+
+                  $.ajax({
+                    url:'/echart/bar/',
+                    type:'get',
+                    dataType:'JSON',
+                    success:function (res) {
+
+
+                    option.dataset.source=res.jiance_count_source;
+
+                    myChart.on('updateAxisPointer', function (event) {
+                        const xAxisInfo = event.axesInfo[0];
+                        if (xAxisInfo) {
+                          const dimension = xAxisInfo.value + 1;
+                          myChart.setOption({
+                            series: {
+                              id: 'pie',
+                              label: {
+                                formatter: '{b}: {@[' + dimension + ']} ({d}%)'
+                              },
+                              encode: {
+                                value: dimension,
+                                tooltip: dimension
+                              }
+                            }
+                          });
+                        }
+                      });
+                    myChart.setOption(option);
+
+                    }
+
+         });
+
+
+             });
+         }
+         function jianceType() {
+             var chartDom = document.getElementById('echarts_2');
+             var myChart = echarts.init(chartDom);
+             var option;
+             option = {
+                      title: {
+                        text: ''
+                      },
+
+
+                      tooltip: {
+                        trigger: 'axis',
+                        axisPointer: {
+                          type: 'shadow'
+                        }
+                      },
+                      legend: {},
+                      grid: {
+                        left: '3%',
+                        right: '20%',
+                        bottom: '3%',
+                        containLabel: true
+                      },
+                      xAxis: {
+                        type: 'value',
+                        boundaryGap: [0, 0.01],
+                        axisLabel: {
+                            textStyle:{
+                                color:'#7edae8',  //坐标的字体颜色
+                                fontSize: 8,
+                            },},
+
+                      },
+                      yAxis: {
+                        type: 'category',
+                        data: ['Brazil', 'Indonesia', 'USA', 'India', 'China', 'World'],
+                        axisLabel: {
+                            textStyle:{
+                                color:'#7edae8',  //坐标的字体颜色
+                                fontSize: 8,
+                            },},
+                      },
+                      series: [
+                        {
+                          name: '2011',
+                          type: 'bar',
+                          data: [18203, 23489, 29034, 104970, 131744, 630230]
+                        },
+
+                      ]
+                    };
+             $.ajax({
+                    url:'/echart/bar/',
+                    type:'get',
+                    dataType:'JSON',
+                    success:function (res) {
+
+                        option.yAxis=res.jiance_type_radiusAxis;
+                        option.series=res.jiance_type_series;
+
+
+                        option && myChart.setOption(option);
+                    }
+
+         });}
+         function positiveType() {
+             var chartDom = document.getElementById('echarts_4');
+             var myChart = echarts.init(chartDom);
+             var option;
+            option = {
+            color: ['#61a0a8','#c23531',],
+              tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                  type: 'shadow'
+                }
+              },
+              legend: {
+                data: ['阴性', '阳性'],
+                   textStyle:{
+                  color:'#fff'
+                }
+              },
+              grid: {
+                left: '3%',
+                right: '4%',
+                bottom: '3%',
+                containLabel: true
+              },
+              xAxis: [
+                {
+                  type: 'value'
+                }
+              ],
+              yAxis: [
+                {
+                  type: 'category',
+                  axisTick: {
+                    show: false
+                  },
+                  data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+                }
+              ],
+              series: [
+                {
+                  name: '阴性',
+                  type: 'bar',
+                  stack: 'Total',
+                  label: {
+                    show: true
+                  },
+                  emphasis: {
+                    focus: 'series'
+                  },
+                  data: [320, 302, 341, 374, 390, 450, 420]
+                },
+                {
+                  name: '阳性',
+                  type: 'bar',
+                  stack: 'Total',
+                  label: {
+                    show: true,
+                    position: 'left'
+                  },
+                  emphasis: {
+                    focus: 'series'
+                  },
+                  data: [-120, -132, -101, -134, -190, -230, -210]
+                }
+              ]
+            };
+             $.ajax({
+                    url:'/echart/bar/',
+                    type:'get',
+                    dataType:'JSON',
+                    success:function (res) {
+
+                        option.yAxis=res.positive_jiance_type.yAxis;
+                        option.series=res.positive_jiance_type.series;
+
+
+
+                       option && myChart.setOption(option);
+                    }
+
+         });
+
+
+
+
+         }
+         function positiveChangqu() {
+             var chartDom = document.getElementById('echarts_5');
+             var myChart = echarts.init(chartDom);
+             var option;
+
+             option = {
+                 grid:{
+                          height:100
+                      },
+                  legend: {
+                      textStyle:{
+                          color:'#ffff',
+                          fontSize:10
+                      }
+                  },
+                  tooltip: {},
+                  dataset: {
+                    source:[['检测类型', '蓝耳', '猪δ冠状病毒', '轮状', '非洲猪瘟', '圆环'], ['口子场', 4, 0, 0, 0, 1], ['马店公猪站', 0, 3, 2, 0, 0], ['阜阳禾丰二场', 3, 0, 0, 0, 0], ['生物安全部', 0, 0, 0, 2, 0]]
+                  },
+                  xAxis: { type: 'category' ,
+
+                            axisLabel: {
+                            interval: 0,  //显示所有的标签
+                            textStyle:{
+                                color:'#7edae8',  //坐标的字体颜色
+                                fontSize: 8,
+                            },},
+                  },
+                  yAxis: {
+
+                  },
+                  // Declare several bar series, each will be mapped
+                  // to a column of dataset.source by default.
+                  series: [{ type: 'bar' }, { type: 'bar' }, { type: 'bar' }, { type: 'bar' }, { type: 'bar' }]
+                };
+                $.ajax({
+                    url:'/echart/bar/',
+                    type:'get',
+                    dataType:'JSON',
+                    success:function (res) {
+
+
+                        option.dataset.source=res.positive_type_changqu_list;
+
+
+
+                        option && myChart.setOption(option);
+                    }
+
+         });
+
+         }
+         function changquTop() {
+             var chartDom = document.getElementById('echarts_6');
+             var myChart = echarts.init(chartDom);
+             var option;
+             option = {
+                 grid:{
+                          height:100
+                      },
+                  xAxis: {
+                    type: 'category',
+                    data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                    axisLabel: {
+                            interval: 0,  //显示所有的标签
+                            textStyle:{
+                                color:'#7edae8',  //坐标的字体颜色
+                                fontSize: 8,
+                            },
+                  },},
+                  yAxis: {
+                    type: 'value'
+                  },
+                  series: [
+                    {
+                      data: [120, 200, 150, 80, 70, 110, 130],
+                      type: 'pictorialBar', // 象形柱图
+                      symbol: 'triangle', // 三角形
+                      color: {
+                        type: 'linear',
+                        x: 0,
+                        y: 0,
+                        x2: 0,
+                        y2: 1,
+                        colorStops: [{
+                          offset: 0, color: '#7edae8'
+                        }, {
+                          offset: 1, color: 'rgba(232, 119, 169, 0.31)'
+                        }]
+                      },
+                    }
+                  ]
+                };
+                $.ajax({
+                    url:'/echart/bar/',
+                    type:'get',
+                    dataType:'JSON',
+                    success:function (res) {
+
+                        option.xAxis.data=res.bumen_name;
+                        option.series[0].data=res.bumen_name_count;
+
+
+                        option && myChart.setOption(option);
+                    }
+
+         });
+
+
+         }
+
+
+
+
+    </script>
+
+{% endblock %}
