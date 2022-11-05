@@ -15,14 +15,27 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from app01.views import pcr_list,pcr_add,echart_list,echart_bar,echart_sample
+from app01 import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     #实验室管理
-    path('pcr/list/', pcr_list),
-    path('pcr/add/',pcr_add),
-    path('echart/list/',echart_list),
-    path('echart/bar/',echart_bar),
-    path('echart/sample/',echart_sample),
+    path('pcr/list/', views.pcr_list),
+    path('pcr/add/', views.pcr_add),
+    path('echart/list/', views.echart_list),
+    # path('echart/bar/',echart_bar),
+    path('echart/sample/', views.echart_sample),
+    path('echart/two/', views.echart_two),
+    path('echart/one/', views.echart_one),
+    path('echart/three/', views.echart_three),
+    path('echart/four/', views.echart_four),
+    path('echart/five/', views.echart_five),
+    path('echart/six/', views.echart_six),
+#抗体
+    path('kangti/echart/',views.kangti_echart),
+    path('kangti/echart/one/',views.kangti_echart_one),
+    path('kangti/echart/two/',views.kangti_echart_two),
+    path('kangti/echart/three/',views.kangti_echart_three)
+
+
 ]

@@ -23,7 +23,7 @@
                     <div class="info-main">
 						<ul>
 							<li><img style="height:48px;width: 48px" src={% static "picture/dna.png"%} ><span>病原检测总数(个)</span><p>{{ pcrcount }}</p></li>
-							<li><img style="height:48px;width: 48px" src={% static "picture/测序仪 pacbio .png"%} ><span>抗体检测总数(个)</span><p>{{ kangti_count }}</p></li>
+							<li><a href="/kangti/echart/"><img style="height:48px;width: 48px" src={% static "picture/测序仪 pacbio .png"%} ></a><span>抗体检测总数(个)</span><p>{{ kangti_count }}</p></li>
 							<li><img src={% static "picture/info-img-3.png"%}><span>上月检测数(个)</span><p>{{ last_month_pcrcount }}</p></li>
 							<li><img style="height:48px;width: 48px" src={% static "picture/阳性.png"%}><span>上月阳性数(个)</span><p>{{ last_month_positive_count }}</p></li>
 						</ul>
@@ -57,7 +57,7 @@
             <div class="cen-top map" id="map" style="height: 90px"></div>
             <div class="cen-bottom boxstyle">
                 <div class="title">检测数量</div>
-                <div id="echarts_3" class="charts" style="width: 600px;height:700px;"></div>
+                <div id="echarts_3" class="charts" style="width: 600px;height:670px;"></div>
             </div>
         </div>
         <div class="con-right fr">
@@ -70,8 +70,8 @@
                 <div id="echarts_5" class="charts"  style="height: 200px"></div>
             </div>
             <div class="right-bottom boxstyle">
-                <div class="title">不同场区检测数量TOP10 </div>
-                <div id="echarts_6" class="charts" style="height: 200px"></div>
+                <div class="title">不同场区检测数量TOP5 </div>
+                <div id="echarts_6" class="charts" style="height: 205px"></div>
             </div>
         </div>
     </div>
@@ -157,15 +157,12 @@
                   ]
                 };
                 $.ajax({
-                    url:'/echart/bar/',
+                    url:'/echart/one/',
                     type:'get',
                     dataType:'JSON',
                     success:function (res) {
-                        console.log(res.series);
-
-
                         option.series=res.series_yangpinType;
-                        console.log(option.series);
+
 
 
                         option && myChart.setOption(option);
@@ -173,7 +170,7 @@
                 });
              {#option && myChart.setOption(option);#}
 
-         }
+         } //完成
          function gongsiType() {
              var chartDom = document.getElementById('echarts_3');
              var myChart = echarts.init(chartDom);
@@ -282,7 +279,7 @@
                  };
 
                   $.ajax({
-                    url:'/echart/bar/',
+                    url:'/echart/three/',
                     type:'get',
                     dataType:'JSON',
                     success:function (res) {
@@ -316,7 +313,7 @@
 
 
              });
-         }
+         } //完成
          function jianceType() {
              var chartDom = document.getElementById('echarts_2');
              var myChart = echarts.init(chartDom);
@@ -369,7 +366,7 @@
                       ]
                     };
              $.ajax({
-                    url:'/echart/bar/',
+                    url:'/echart/two/',
                     type:'get',
                     dataType:'JSON',
                     success:function (res) {
@@ -381,7 +378,7 @@
                         option && myChart.setOption(option);
                     }
 
-         });}
+         });}    //完成
          function positiveType() {
              var chartDom = document.getElementById('echarts_4');
              var myChart = echarts.init(chartDom);
@@ -449,7 +446,7 @@
               ]
             };
              $.ajax({
-                    url:'/echart/bar/',
+                    url:'/echart/four/',
                     type:'get',
                     dataType:'JSON',
                     success:function (res) {
@@ -504,7 +501,7 @@
                   series: [{ type: 'bar' }, { type: 'bar' }, { type: 'bar' }, { type: 'bar' }, { type: 'bar' }]
                 };
                 $.ajax({
-                    url:'/echart/bar/',
+                    url:'/echart/five/',
                     type:'get',
                     dataType:'JSON',
                     success:function (res) {
@@ -562,7 +559,7 @@
                   ]
                 };
                 $.ajax({
-                    url:'/echart/bar/',
+                    url:'/echart/six/',
                     type:'get',
                     dataType:'JSON',
                     success:function (res) {

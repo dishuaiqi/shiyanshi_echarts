@@ -43,7 +43,7 @@ class BingYuan(models.Model):
 class kangti(models.Model):
     id = models.CharField(primary_key=True, max_length=255)
     日期 = models.DateTimeField(blank=True, null=True)
-    公司 = models.TextField(db_collation='utf8_croatian_ci', blank=True, null=True)
+    公司 = models.TextField(blank=True, null=True)
     部门 = models.TextField(blank=True, null=True)
     猪耳号 = models.TextField(blank=True, null=True)
     猪群来源 = models.TextField(blank=True, null=True)
