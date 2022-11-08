@@ -900,6 +900,11 @@ def kangti_echart_three(request):
 
     data = {}
 
+    #统计达标情况
+    bumen_list=[]
+    gongsi_list=[]
+    yangben_list=[]
+    shuju_list=[]
     children5=[]
     dic_four = {}
     for i in yangpin_count:
@@ -911,7 +916,7 @@ def kangti_echart_three(request):
             children3=[]
 
             for z in j:
-
+                  #获取部门
                 children1 = []
                 for m in z.values():
                     dic_two = {}
@@ -921,6 +926,12 @@ def kangti_echart_three(request):
                         dic['name']=list(n.keys())[0]
                         dic['value']=list(n.values())[0]
                         children.append(dic)
+                        #统计达标情况
+                        yangben_list.append(list(n.keys())[0])
+                        shuju_list.append(list(n.values())[0])
+
+                        bumen_list.append(list(z.keys())[0])
+                        gongsi_list.append(list(i.keys())[0])
 
 
                     dic_two['name']=list(z.keys())[0]
@@ -946,6 +957,19 @@ def kangti_echart_three(request):
         'data':[dic_four],
         'rongfeng':children5[4]
     }
+    #统计达标情况
+    #存入excel
+
+    dabiao_qingkuang={
+        '公司':gongsi_list,
+        '部门':bumen_list,
+        '检测频率':yangben_list,
+        '检测数量':shuju_list
+    }
+    print(bumen_list)
+    print(gongsi_list)
+    excel_pd=pd.DataFrame(dabiao_qingkuang)
+    excel_pd.to_excel(r'D:\Users\Administrator\Desktop\达标情况.xlsx')
     return JsonResponse(data)
 
 
